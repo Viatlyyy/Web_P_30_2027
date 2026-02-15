@@ -1,6 +1,6 @@
 ﻿namespace WebApplication1.Models
 {
-    public class Student
+    public class Student : EFModel
     {
         public int Age { get; set; }
 
