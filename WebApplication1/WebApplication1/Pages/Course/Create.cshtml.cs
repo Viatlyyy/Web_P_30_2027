@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApplication1.Data;
-using CourseModel = WebApplication1.Models.Course; // псевдоним
+using CourseModel = WebApplication1.Models.Course; 
 
 namespace WebApplication1.Pages.Courses
 {
@@ -20,7 +20,7 @@ namespace WebApplication1.Pages.Courses
         }
 
         [BindProperty]
-        public CourseModel Course { get; set; } = default!; // используем псевдоним
+        public CourseModel Course { get; set; } = default!;
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -34,7 +34,7 @@ namespace WebApplication1.Pages.Courses
                 Course.Name = Course.Title;
             }
 
-            _context.Courses.Add(Course); // DbSet<Course> – не конфликтует
+            _context.Courses.Add(Course); 
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
