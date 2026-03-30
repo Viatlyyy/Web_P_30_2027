@@ -2,10 +2,10 @@
 @model WebApplication1.Pages.Courses.EditModel
 
 @{
-    ViewData["Title"] = "Edit Course";
+    ViewData["Title"] = "Редактирование курса";
 }
 
-<h1>Edit Course</h1>
+<h1>Редактирование курса</h1>
 
 <hr />
 <div class="row">
@@ -14,27 +14,27 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Course.Id" />
 
-            <div class="form-group">
-                <label asp-for="Course.Title" class="control-label"></label>
+            <div class="form-group mb-3">
+                <label asp-for="Course.Title" class="control-label">Название</label>
                 <input asp-for="Course.Title" class="form-control" />
                 <span asp-validation-for="Course.Title" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Course.Name" class="control-label"></label>
+            <div class="form-group mb-3">
+                <label asp-for="Course.Name" class="control-label">Полное название</label>
                 <input asp-for="Course.Name" class="form-control" />
                 <span asp-validation-for="Course.Name" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-page="./Index">Back to List</a>
+    <a asp-page="./Index">Назад к списку</a>
 </div>
 
 @section Scripts {
