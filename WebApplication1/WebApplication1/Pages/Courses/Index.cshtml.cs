@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
-using WebApplication1.Models; 
+using CourseModel = WebApplication1.Models.Course;
 
 namespace WebApplication1.Pages.Courses
 {
@@ -14,7 +14,7 @@ namespace WebApplication1.Pages.Courses
             _context = context;
         }
 
-        public IList<WebApplication1.Models.Course> Courses { get; set; } = default!;
+        public IList<CourseModel> Courses { get; set; } = default!;
 
         public async Task OnGetAsync()
         {

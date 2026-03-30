@@ -6,11 +6,11 @@ using CourseModel = WebApplication1.Models.Course;
 
 namespace WebApplication1.Pages.Courses
 {
-    public class EditModel : PageModel
+    public class DeleteModel : PageModel
     {
         private readonly ApplicationDbContext _context;
 
-        public EditModel(ApplicationDbContext context)
+        public DeleteModel(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -30,46 +30,27 @@ namespace WebApplication1.Pages.Courses
             {
                 return NotFound();
             }
+
             Course = course;
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return Page();
+                return NotFound();
             }
 
-            if (string.IsNullOrWhiteSpace(Course.Name))
+            var course = await _context.Courses.FindAsync(id);
+            if (course != null)
             {
-                Course.Name = Course.Title;
-            }
-
-            _context.Attach(Course).State = EntityState.Modified;
-
-            try
-            {
+                Course = course;
+                _context.Courses.Remove(Course);
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CourseExists(Course.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
             }
 
             return RedirectToPage("./Index");
-        }
-
-        private bool CourseExists(int id)
-        {
-            return _context.Courses.Any(e => e.Id == id);
         }
     }
 }

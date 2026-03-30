@@ -23,11 +23,10 @@
         @foreach (var item in Model.Courses)
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@item.Title</td>
+                <td>@item.Name</td>
                 <td>
                     <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>

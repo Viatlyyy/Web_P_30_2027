@@ -6,11 +6,11 @@ using CourseModel = WebApplication1.Models.Course;
 
 namespace WebApplication1.Pages.Courses
 {
-    public class DeleteModel : PageModel
+    public class EditModel : PageModel
     {
         private readonly ApplicationDbContext _context;
 
-        public DeleteModel(ApplicationDbContext context)
+        public EditModel(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -26,34 +26,51 @@ namespace WebApplication1.Pages.Courses
             }
 
             var course = await _context.Courses.FirstOrDefaultAsync(m => m.Id == id);
-
             if (course == null)
             {
                 return NotFound();
             }
-            else
-            {
-                Course = course;
-            }
+
+            Course = course;
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync()
         {
-            if (id == null)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return Page();
             }
 
-            var course = await _context.Courses.FindAsync(id);
-            if (course != null)
+            if (string.IsNullOrWhiteSpace(Course.Name))
             {
-                Course = course;
-                _context.Courses.Remove(Course);
+                Course.Name = Course.Title;
+            }
+
+            _context.Attach(Course).State = EntityState.Modified;
+
+            try
+            {
                 await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CourseExists(Course.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
             return RedirectToPage("./Index");
+        }
+
+        private bool CourseExists(int id)
+        {
+            return _context.Courses.Any(e => e.Id == id);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApplication1.Data;
-using CourseModel = WebApplication1.Models.Course; 
+using CourseModel = WebApplication1.Models.Course;
 
 namespace WebApplication1.Pages.Courses
 {
@@ -29,12 +29,13 @@ namespace WebApplication1.Pages.Courses
                 return Page();
             }
 
+            
             if (string.IsNullOrWhiteSpace(Course.Name))
             {
                 Course.Name = Course.Title;
             }
 
-            _context.Courses.Add(Course); 
+            _context.Courses.Add(Course);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
