@@ -12,7 +12,7 @@ namespace WebApplication1.Pages.Enrollments
         private readonly ApplicationDbContext _context;
         public IndexModel(ApplicationDbContext context) => _context = context;
 
-        public IList<Enrollment> Enrollments { get; set; }
+        public IList<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 
         public async Task OnGetAsync()
         {

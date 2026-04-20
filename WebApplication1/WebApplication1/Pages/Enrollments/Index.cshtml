@@ -1,24 +1,53 @@
 ﻿@page
 @model WebApplication1.Pages.Enrollments.IndexModel
 @{
-    ViewData["Title"] = "Записи на курсы";
+    ViewData["Title"] = "Записи студентов на курсы";
 }
+
 <h1>Записи студентов на курсы</h1>
-<p><a asp-page="Create" class="btn btn-primary">Добавить запись</a></p>
+<p>
+    <a asp-page="Create" class="btn btn-primary">Добавить запись</a>
+</p>
 
 <table class="table">
     <thead>
-        <tr><th>Студент</th><th>Курс</th><th>Дата записи</th><th>Оценка</th><th></th></tr>
+        <tr>
+            <th>Студент</th>
+            <th>Курс</th>
+            <th>Дата записи</th>
+            <th>Оценка</th>
+            <th></th>
+        </tr>
     </thead>
     <tbody>
         @foreach (var enrollment in Model.Enrollments)
         {
             <tr>
-                <td>@($"{enrollment.Student.FirstName} {enrollment.Student.LastName}")</td>
-                <td>@enrollment.Course.Title</td>
+                <td>
+                    @if (enrollment.Student != null)
+                    {
+                        @($"{enrollment.Student.FirstName} {enrollment.Student.LastName}")
+                    }
+                    else
+                    {
+                        <span class="text-muted">Студент удалён</span>
+                    }
+                </td>
+                <td>
+                    @if (enrollment.Course != null)
+                    {
+                        @enrollment.Course.Title
+                    }
+                    else
+                    {
+                        <span class="text-muted">Курс удалён</span>
+                    }
+                </td>
                 <td>@enrollment.EnrollmentDate.ToShortDateString()</td>
                 <td>@(enrollment.Grade.HasValue? enrollment.Grade.Value.ToString() : "—")</td>
-                <td><a asp-page="./Delete" asp-route-studentId="@enrollment.StudentId" asp-route-courseId="@enrollment.CourseId">Удалить</a></td>
+                <td>
+                    <a asp-page="./Delete" asp-route-studentId="@enrollment.StudentId" asp-route-courseId="@enrollment.CourseId">Удалить</a>
+                </td>
             </tr>
         }
     </tbody>

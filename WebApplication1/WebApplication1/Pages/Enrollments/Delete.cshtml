@@ -9,17 +9,17 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">Студент</dt>
-        <dd class="col-sm-10">@($"{Model.Enrollment.Student.FirstName} {Model.Enrollment.Student.LastName}")</dd>
+        <dd class="col-sm-10">@($"{Model.Enrollment!.Student?.FirstName} {Model.Enrollment.Student?.LastName}")</dd>
         <dt class="col-sm-2">Курс</dt>
-        <dd class="col-sm-10">@Model.Enrollment.Course.Title</dd>
+        <dd class="col-sm-10">@Model.Enrollment!.Course?.Title</dd>
         <dt class="col-sm-2">Дата записи</dt>
-        <dd class="col-sm-10">@Model.Enrollment.EnrollmentDate.ToShortDateString()</dd>
+        <dd class="col-sm-10">@Model.Enrollment!.EnrollmentDate.ToShortDateString()</dd>
         <dt class="col-sm-2">Оценка</dt>
-        <dd class="col-sm-10">@(Model.Enrollment.Grade.HasValue? Model.Enrollment.Grade.Value.ToString() : "—")</dd>
+        <dd class="col-sm-10">@(Model.Enrollment!.Grade.HasValue ? Model.Enrollment.Grade.Value.ToString() : "—")</dd>
     </dl>
     <form method="post">
-        <input type="hidden" asp-for="Enrollment.StudentId" />
-        <input type="hidden" asp-for="Enrollment.CourseId" />
+        <input type="hidden" asp-for="Enrollment!.StudentId" />
+        <input type="hidden" asp-for="Enrollment!.CourseId" />
         <input type="submit" value="Удалить" class="btn btn-danger" /> |
         <a asp-page="./Index">Назад к списку</a>
     </form>

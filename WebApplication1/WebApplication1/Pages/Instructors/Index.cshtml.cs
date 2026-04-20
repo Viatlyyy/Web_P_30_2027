@@ -12,13 +12,11 @@ namespace WebApplication1.Pages.Instructors
         private readonly ApplicationDbContext _context;
         public IndexModel(ApplicationDbContext context) => _context = context;
 
-        public IList<Instructor> Instructors { get; set; }
+        public IList<Instructor> Instructors { get; set; } = new List<Instructor>();
 
         public async Task OnGetAsync()
         {
-            Instructors = await _context.Instructors
-                .Include(i => i.Courses)
-                .ToListAsync();
+            Instructors = await _context.Instructors.Include(i => i.Courses).ToListAsync();
         }
     }
 }

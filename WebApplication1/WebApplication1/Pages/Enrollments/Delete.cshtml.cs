@@ -13,15 +13,16 @@ namespace WebApplication1.Pages.Enrollments
         public DeleteModel(ApplicationDbContext context) => _context = context;
 
         [BindProperty]
-        public Enrollment Enrollment { get; set; }
+        public Enrollment Enrollment { get; set; } = new Enrollment();
 
         public async Task<IActionResult> OnGetAsync(int studentId, int courseId)
         {
-            Enrollment = await _context.Enrollments
+            var enrollment = await _context.Enrollments
                 .Include(e => e.Student)
                 .Include(e => e.Course)
                 .FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == courseId);
-            if (Enrollment == null) return NotFound();
+            if (enrollment == null) return NotFound();
+            Enrollment = enrollment;
             return Page();
         }
 

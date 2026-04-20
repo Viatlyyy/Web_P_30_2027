@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
-using CourseModel = WebApplication1.Models.Course;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplication1.Data;
+using WebApplication1.Models;
+using CourseModel = WebApplication1.Models.Course;
 
 namespace WebApplication1.Pages.Courses
 {
@@ -15,16 +16,16 @@ namespace WebApplication1.Pages.Courses
         public EditModel(ApplicationDbContext context) => _context = context;
 
         [BindProperty]
-        public CourseModel Course { get; set; }
+        public CourseModel Course { get; set; } = new CourseModel();  // Инициализация
 
-        public SelectList InstructorsSelectList { get; set; }
+        public SelectList InstructorsSelectList { get; set; } = new SelectList(Enumerable.Empty<Instructor>(), "Id", "Name"); // Инициализация
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null) return NotFound();
-            Course = await _context.Courses.FindAsync(id);
-            if (Course == null) return NotFound();
-
+            var course = await _context.Courses.FindAsync(id);
+            if (course == null) return NotFound();
+            Course = course;
             var instructors = await _context.Instructors.ToListAsync();
             InstructorsSelectList = new SelectList(instructors, "Id", "Name", Course.InstructorId);
             return Page();

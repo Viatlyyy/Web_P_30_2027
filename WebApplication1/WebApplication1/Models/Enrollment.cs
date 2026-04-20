@@ -8,12 +8,12 @@ namespace WebApplication1.Models
         [Required(ErrorMessage = "Поле 'Студент' обязательно для заполнения")]
         [Display(Name = "Студент")]
         public int StudentId { get; set; }
-        public Student Student { get; set; }
+        public Student? Student { get; set; }
 
         [Required(ErrorMessage = "Поле 'Курс' обязательно для заполнения")]
         [Display(Name = "Курс")]
         public int CourseId { get; set; }
-        public Course Course { get; set; }
+        public Course? Course { get; set; }
 
         [Required(ErrorMessage = "Поле 'Дата записи' обязательно для заполнения")]
         [DataType(DataType.Date)]

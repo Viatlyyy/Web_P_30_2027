@@ -16,10 +16,10 @@ namespace WebApplication1.Pages.Enrollments
         public CreateModel(ApplicationDbContext context) => _context = context;
 
         [BindProperty]
-        public Enrollment Enrollment { get; set; }
+        public Enrollment Enrollment { get; set; } = new Enrollment { EnrollmentDate = DateTime.Today }; // Инициализация
 
-        public SelectList StudentsSelectList { get; set; }
-        public SelectList CoursesSelectList { get; set; }
+        public SelectList StudentsSelectList { get; set; } = new SelectList(Enumerable.Empty<Student>(), "Id", "Name");
+        public SelectList CoursesSelectList { get; set; } = new SelectList(Enumerable.Empty<Course>(), "Id", "Title");
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -41,7 +41,6 @@ namespace WebApplication1.Pages.Enrollments
                 return Page();
             }
 
-           
             var exists = await _context.Enrollments
                 .AnyAsync(e => e.StudentId == Enrollment.StudentId && e.CourseId == Enrollment.CourseId);
             if (exists)

@@ -12,15 +12,16 @@ namespace WebApplication1.Pages.Instructors
         private readonly ApplicationDbContext _context;
         public DetailsModel(ApplicationDbContext context) => _context = context;
 
-        public Instructor Instructor { get; set; }
+        public Instructor Instructor { get; set; } = new Instructor(); 
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null) return NotFound();
-            Instructor = await _context.Instructors
+            var instructor = await _context.Instructors
                 .Include(i => i.Courses)
                 .FirstOrDefaultAsync(i => i.Id == id);
-            if (Instructor == null) return NotFound();
+            if (instructor == null) return NotFound();
+            Instructor = instructor;
             return Page();
         }
     }
