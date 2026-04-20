@@ -1,15 +1,10 @@
 ﻿@page
 @model WebApplication1.Pages.Courses.IndexModel
-
 @{
     ViewData["Title"] = "Курсы";
 }
-
 <h1>Курсы</h1>
-
-<p>
-    <a asp-page="Create" class="btn btn-primary">Создать новый</a>
-</p>
+<p><a asp-page="Create" class="btn btn-primary">Создать новый</a></p>
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
     @foreach (var course in Model.Courses)
@@ -19,12 +14,13 @@
                 <div class="card-body">
                     <h5 class="card-title">@course.Title</h5>
                     <p class="card-text">
-                        <strong>Название (полное):</strong> @course.Name
+                        <strong>Полное название:</strong> @course.Name<br />
+                        <strong>Преподаватель:</strong> @(course.Instructor != null ? $"{course.Instructor.FirstName} {course.Instructor.LastName}" : "Не назначен")
                     </p>
                 </div>
                 <div class="card-footer bg-transparent">
                     <a asp-page="./Edit" asp-route-id="@course.Id" class="btn btn-sm btn-outline-primary">Редактировать</a>
-                    <a asp-page="./Delete" asp-route-id="@course.Id" class="btn btn-sm btn-outline-danger">Удалить</a>
+                    <a asp-page="./Delete" asp-route-id="@course.Id" class=" btn-sm btn-outline-danger">Удалить</a>
                 </div>
             </div>
         </div>

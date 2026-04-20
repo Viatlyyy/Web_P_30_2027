@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace WebApplication1.Models
 {
@@ -12,5 +13,8 @@ namespace WebApplication1.Models
 
         [Required(ErrorMessage = "Поле 'Отдел' обязательно для заполнения")]
         public string Department { get; set; }
+
+        
+        public ICollection<Course> Courses { get; set; } = new List<Course>();
     }
 }

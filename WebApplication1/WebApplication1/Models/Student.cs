@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace WebApplication1.Models
 {
@@ -20,5 +21,8 @@ namespace WebApplication1.Models
         [Required(ErrorMessage = "Поле 'Email' обязательно для заполнения")]
         [EmailAddress(ErrorMessage = "Введите корректный email адрес")]
         public string Email { get; set; }
+
+        
+        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }

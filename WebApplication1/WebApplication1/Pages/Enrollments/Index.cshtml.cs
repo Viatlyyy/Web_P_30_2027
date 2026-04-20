@@ -1,23 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
-using CourseModel = WebApplication1.Models.Course;
+using WebApplication1.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace WebApplication1.Pages.Courses
+namespace WebApplication1.Pages.Enrollments
 {
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
         public IndexModel(ApplicationDbContext context) => _context = context;
 
-        public IList<CourseModel> Courses { get; set; }
+        public IList<Enrollment> Enrollments { get; set; }
 
         public async Task OnGetAsync()
         {
-            Courses = await _context.Courses
-                .Include(c => c.Instructor)
+            Enrollments = await _context.Enrollments
+                .Include(e => e.Student)
+                .Include(e => e.Course)
                 .ToListAsync();
         }
     }

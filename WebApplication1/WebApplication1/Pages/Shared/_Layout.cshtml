@@ -34,6 +34,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Instructors/Index">Преподаватели</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-page="/Enrollments/Index">Записи на курсы</a>
+                        </li>
                     </ul>
                     <div class="form-check form-switch ms-auto">
                         <input class="form-check-input" type="checkbox" id="themeSwitch">
@@ -62,11 +65,10 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-   
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
-       
+        
         const themeSwitch = document.getElementById('themeSwitch');
         const root = document.documentElement;
 
