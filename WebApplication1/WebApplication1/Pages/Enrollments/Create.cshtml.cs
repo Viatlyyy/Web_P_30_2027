@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using WebApplication1.Data;
 using WebApplication1.Models;
+using WebApplication1.Hubs;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +15,16 @@ namespace WebApplication1.Pages.Enrollments
     public class CreateModel : PageModel
     {
         private readonly ApplicationDbContext _context;
-        public CreateModel(ApplicationDbContext context) => _context = context;
+        private readonly IHubContext<AppHub> _hubContext;
+
+        public CreateModel(ApplicationDbContext context, IHubContext<AppHub> hubContext)
+        {
+            _context = context;
+            _hubContext = hubContext;
+        }
 
         [BindProperty]
-        public Enrollment Enrollment { get; set; } = new Enrollment { EnrollmentDate = DateTime.Today }; 
-
+        public Enrollment Enrollment { get; set; } = new Enrollment { EnrollmentDate = DateTime.Today };
         public SelectList StudentsSelectList { get; set; } = new SelectList(Enumerable.Empty<Student>(), "Id", "Name");
         public SelectList CoursesSelectList { get; set; } = new SelectList(Enumerable.Empty<Course>(), "Id", "Title");
 
@@ -41,8 +48,7 @@ namespace WebApplication1.Pages.Enrollments
                 return Page();
             }
 
-            var exists = await _context.Enrollments
-                .AnyAsync(e => e.StudentId == Enrollment.StudentId && e.CourseId == Enrollment.CourseId);
+            var exists = await _context.Enrollments.AnyAsync(e => e.StudentId == Enrollment.StudentId && e.CourseId == Enrollment.CourseId);
             if (exists)
             {
                 ModelState.AddModelError(string.Empty, "Этот студент уже записан на данный курс.");
@@ -51,6 +57,7 @@ namespace WebApplication1.Pages.Enrollments
 
             _context.Enrollments.Add(Enrollment);
             await _context.SaveChangesAsync();
+            await _hubContext.Clients.All.SendAsync("DataChanged", "Enrollment", "Create");
             return RedirectToPage("./Index");
         }
     }

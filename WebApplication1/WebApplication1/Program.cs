@@ -2,18 +2,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Models;
+using WebApplication1.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddRazorPages();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("StudentDB")));
 
-
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -24,7 +24,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = false;
 });
 
-
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
@@ -32,29 +31,27 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
-builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
-
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts();
 }
 else
 {
     app.UseDeveloperExceptionPage();
 }
 
-app.UseStaticFiles();          
+app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthentication();       
-app.UseAuthorization();        
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
-
+app.MapHub<AppHub>("/apphub");
 
 using (var scope = app.Services.CreateScope())
 {

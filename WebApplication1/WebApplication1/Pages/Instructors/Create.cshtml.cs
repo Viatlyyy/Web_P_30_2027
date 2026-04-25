@@ -1,40 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using WebApplication1.Data;
 using WebApplication1.Models;
+using WebApplication1.Hubs;
+using System.Threading.Tasks;
 
 namespace WebApplication1.Pages.Instructors
 {
     public class CreateModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHubContext<AppHub> _hubContext;
 
-        public CreateModel(ApplicationDbContext context)
+        public CreateModel(ApplicationDbContext context, IHubContext<AppHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
-        public IActionResult OnGet()
-        {
-            return Page();
-        }
+        public IActionResult OnGet() => Page();
 
         [BindProperty]
-        public Instructor Instructor { get; set; } = default!;
+        public Instructor Instructor { get; set; } = new Instructor();
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            
+            if (!ModelState.IsValid) return Page();
             Instructor.Name = $"{Instructor.FirstName} {Instructor.LastName}";
-
             _context.Instructors.Add(Instructor);
             await _context.SaveChangesAsync();
-
+            await _hubContext.Clients.All.SendAsync("DataChanged", "Instructor", "Create");
             return RedirectToPage("./Index");
         }
     }
