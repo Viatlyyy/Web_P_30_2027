@@ -25,8 +25,8 @@ namespace WebApplication1.Pages.Chat
 
     public class ChatMessage
     {
-        public string UserName { get; set; }
-        public string Message { get; set; }
+        public string UserName { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
         public DateTime Timestamp { get; set; }
     }
 }
