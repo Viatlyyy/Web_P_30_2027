@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebApplication1.Models;
 
 namespace WebApplication1.Pages.Admin
 {
@@ -17,7 +17,7 @@ namespace WebApplication1.Pages.Admin
             _userManager = userManager;
         }
 
-        public IList<ApplicationUser> Users { get; set; }
+        public IList<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
 
         public async Task OnGetAsync()
         {

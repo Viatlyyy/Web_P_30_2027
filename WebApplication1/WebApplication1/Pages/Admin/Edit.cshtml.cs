@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -23,62 +24,62 @@ namespace WebApplication1.Pages.Admin
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public InputModel Input { get; set; } = new InputModel();
 
-        public SelectList RolesSelectList { get; set; }
+        public SelectList RolesSelectList { get; set; } = new SelectList(Enumerable.Empty<IdentityRole>(), "Name", "Name");
 
         public class InputModel
         {
-            public string Id { get; set; }
+            [Required]
+            public string Id { get; set; } = string.Empty;
 
-            [Required(ErrorMessage = "Email обязателен")]
+            [Required]
             [EmailAddress]
-            public string Email { get; set; }
+            public string Email { get; set; } = string.Empty;
 
             public string? FirstName { get; set; }
             public string? LastName { get; set; }
-
-            [Display(Name = "Роль")]
             public string? Role { get; set; }
 
             [DataType(DataType.Password)]
-            [Display(Name = "Новый пароль")]
             public string? NewPassword { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
-            if (id == null) return NotFound();
+            if (string.IsNullOrEmpty(id))
+                return NotFound();
+
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null) return NotFound();
+            if (user == null)
+                return NotFound();
 
-            Input = new InputModel
-            {
-                Id = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName
-            };
+            Input.Id = user.Id;
+            Input.Email = user.Email ?? string.Empty;
+            Input.FirstName = user.FirstName;
+            Input.LastName = user.LastName;
 
-            var currentRoles = await _userManager.GetRolesAsync(user);
-            Input.Role = currentRoles.FirstOrDefault();
+            var roles = await _roleManager.Roles.ToListAsync();
+            RolesSelectList = new SelectList(roles, "Name", "Name");
 
-            var roles = await Task.Run(() => _roleManager.Roles.Select(r => r.Name).ToList());
-            RolesSelectList = new SelectList(roles);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            Input.Role = userRoles.FirstOrDefault();
+
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _userManager.FindByIdAsync(Input.Id);
-            if (user == null) return NotFound();
-
             if (!ModelState.IsValid)
             {
-                var roles = await Task.Run(() => _roleManager.Roles.Select(r => r.Name).ToList());
-                RolesSelectList = new SelectList(roles);
+                var roles = await _roleManager.Roles.ToListAsync();
+                RolesSelectList = new SelectList(roles, "Name", "Name");
                 return Page();
             }
+
+            var user = await _userManager.FindByIdAsync(Input.Id);
+            if (user == null)
+                return NotFound();
 
             user.Email = Input.Email;
             user.UserName = Input.Email;
@@ -90,22 +91,12 @@ namespace WebApplication1.Pages.Admin
             {
                 foreach (var error in updateResult.Errors)
                     ModelState.AddModelError(string.Empty, error.Description);
+                var rolesReload = await _roleManager.Roles.ToListAsync();
+                RolesSelectList = new SelectList(rolesReload, "Name", "Name");
                 return Page();
             }
 
-            
-            var currentRoles = await _userManager.GetRolesAsync(user);
-            var roleToAdd = Input.Role;
-            var roleToRemove = currentRoles.FirstOrDefault();
-            if (roleToAdd != roleToRemove)
-            {
-                if (!string.IsNullOrEmpty(roleToRemove))
-                    await _userManager.RemoveFromRoleAsync(user, roleToRemove);
-                if (!string.IsNullOrEmpty(roleToAdd))
-                    await _userManager.AddToRoleAsync(user, roleToAdd);
-            }
-
-            
+            // Смена пароля, если указан
             if (!string.IsNullOrEmpty(Input.NewPassword))
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -114,8 +105,18 @@ namespace WebApplication1.Pages.Admin
                 {
                     foreach (var error in resetResult.Errors)
                         ModelState.AddModelError(string.Empty, error.Description);
+                    var rolesReload = await _roleManager.Roles.ToListAsync();
+                    RolesSelectList = new SelectList(rolesReload, "Name", "Name");
                     return Page();
                 }
+            }
+
+            // Обновление роли
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!string.IsNullOrEmpty(Input.Role))
+            {
+                await _userManager.AddToRoleAsync(user, Input.Role);
             }
 
             return RedirectToPage("./Index");

@@ -17,7 +17,7 @@ namespace WebApplication1.Pages.Admin
         }
 
         [BindProperty]
-        public ApplicationUser UserToDelete { get; set; }
+        public ApplicationUser UserToDelete { get; set; } = new ApplicationUser();
 
         public async Task<IActionResult> OnGetAsync(string id)
         {

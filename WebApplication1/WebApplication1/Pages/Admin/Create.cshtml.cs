@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WebApplication1.Models;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplication1.Models;
 
 namespace WebApplication1.Pages.Admin
 {
@@ -23,35 +24,34 @@ namespace WebApplication1.Pages.Admin
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public InputModel Input { get; set; } = new InputModel();
 
-        public SelectList RolesSelectList { get; set; }
+        public SelectList RolesSelectList { get; set; } = new SelectList(Enumerable.Empty<IdentityRole>(), "Name", "Name");
 
         public class InputModel
         {
-            [Required(ErrorMessage = "Email обязателен")]
+            [Required]
             [EmailAddress]
-            public string Email { get; set; }
+            public string Email { get; set; } = string.Empty;
 
-            [Required(ErrorMessage = "Пароль обязателен")]
+            [Required]
             [DataType(DataType.Password)]
-            public string Password { get; set; }
+            public string Password { get; set; } = string.Empty;
 
             [DataType(DataType.Password)]
             [Compare("Password", ErrorMessage = "Пароли не совпадают")]
-            public string ConfirmPassword { get; set; }
+            public string ConfirmPassword { get; set; } = string.Empty;
 
             public string? FirstName { get; set; }
             public string? LastName { get; set; }
 
-            [Display(Name = "Роль")]
             public string? Role { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var roles = await Task.Run(() => _roleManager.Roles.Select(r => r.Name).ToList());
-            RolesSelectList = new SelectList(roles);
+            var roles = await _roleManager.Roles.ToListAsync();
+            RolesSelectList = new SelectList(roles, "Name", "Name");
             return Page();
         }
 
@@ -59,8 +59,8 @@ namespace WebApplication1.Pages.Admin
         {
             if (!ModelState.IsValid)
             {
-                var roles = await Task.Run(() => _roleManager.Roles.Select(r => r.Name).ToList());
-                RolesSelectList = new SelectList(roles);
+                var roles = await _roleManager.Roles.ToListAsync();
+                RolesSelectList = new SelectList(roles, "Name", "Name");
                 return Page();
             }
 
@@ -80,14 +80,12 @@ namespace WebApplication1.Pages.Admin
                 }
                 return RedirectToPage("./Index");
             }
-
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-
-            var rolesList = await Task.Run(() => _roleManager.Roles.Select(r => r.Name).ToList());
-            RolesSelectList = new SelectList(rolesList);
+            var rolesReload = await _roleManager.Roles.ToListAsync();
+            RolesSelectList = new SelectList(rolesReload, "Name", "Name");
             return Page();
         }
     }

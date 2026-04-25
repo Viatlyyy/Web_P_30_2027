@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApplication1.Models;
@@ -17,23 +16,23 @@ namespace WebApplication1.Pages.Account
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public InputModel Input { get; set; } = new InputModel(); 
 
         public class InputModel
         {
             [Required(ErrorMessage = "Email обязателен")]
             [EmailAddress]
-            public string Email { get; set; }
+            public string Email { get; set; } = string.Empty; 
 
             [Required(ErrorMessage = "Пароль обязателен")]
             [DataType(DataType.Password)]
-            public string Password { get; set; }
+            public string Password { get; set; } = string.Empty; 
 
             [Display(Name = "Запомнить меня")]
-            public bool RememberMe { get; set; }
+            public bool RememberMe { get; set; } = false;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
             if (ModelState.IsValid)
@@ -47,4 +46,4 @@ namespace WebApplication1.Pages.Account
             return Page();
         }
     }
-}   
+}

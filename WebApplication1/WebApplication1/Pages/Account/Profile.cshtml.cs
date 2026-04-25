@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApplication1.Models;
@@ -9,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace WebApplication1.Pages.Account
 {
-    [Authorize]
     public class ProfileModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _environment;
+
         public ProfileModel(UserManager<ApplicationUser> userManager, IWebHostEnvironment environment)
         {
             _userManager = userManager;
@@ -21,13 +20,12 @@ namespace WebApplication1.Pages.Account
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public InputModel Input { get; set; } = new InputModel();
 
-        public string CurrentAvatarPath { get; set; }
+        public string? CurrentAvatarPath { get; set; }
 
         public class InputModel
         {
-            [Display(Name = "Аватар")]
             public IFormFile? AvatarImage { get; set; }
         }
 
@@ -35,6 +33,7 @@ namespace WebApplication1.Pages.Account
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
+
             CurrentAvatarPath = user.AvatarPath;
             return Page();
         }
@@ -65,8 +64,9 @@ namespace WebApplication1.Pages.Account
                 }
                 user.AvatarPath = $"/uploads/avatars/{uniqueFileName}";
                 await _userManager.UpdateAsync(user);
+                CurrentAvatarPath = user.AvatarPath;
             }
-            CurrentAvatarPath = user.AvatarPath;
+
             return RedirectToPage();
         }
     }
