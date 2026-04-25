@@ -16,7 +16,7 @@ namespace WebApplication1.Pages.Enrollments
         public CreateModel(ApplicationDbContext context) => _context = context;
 
         [BindProperty]
-        public Enrollment Enrollment { get; set; } = new Enrollment { EnrollmentDate = DateTime.Today }; // Инициализация
+        public Enrollment Enrollment { get; set; } = new Enrollment { EnrollmentDate = DateTime.Today }; 
 
         public SelectList StudentsSelectList { get; set; } = new SelectList(Enumerable.Empty<Student>(), "Id", "Name");
         public SelectList CoursesSelectList { get; set; } = new SelectList(Enumerable.Empty<Course>(), "Id", "Title");

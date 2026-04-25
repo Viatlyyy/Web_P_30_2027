@@ -16,9 +16,9 @@ namespace WebApplication1.Pages.Courses
         public EditModel(ApplicationDbContext context) => _context = context;
 
         [BindProperty]
-        public CourseModel Course { get; set; } = new CourseModel();  // Инициализация
+        public CourseModel Course { get; set; } = new CourseModel(); 
 
-        public SelectList InstructorsSelectList { get; set; } = new SelectList(Enumerable.Empty<Instructor>(), "Id", "Name"); // Инициализация
+        public SelectList InstructorsSelectList { get; set; } = new SelectList(Enumerable.Empty<Instructor>(), "Id", "Name"); 
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
