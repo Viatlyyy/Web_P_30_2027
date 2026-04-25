@@ -1,0 +1,11 @@
+﻿@page
+@model WebApplication1.Pages.Account.LogoutModel
+@{
+    ViewData["Title"] = "Выход";
+}
+<h1>Выход</h1>
+<p>Вы уверены, что хотите выйти?</p>
+<form method="post">
+    <button type="submit" class="btn btn-danger">Выйти</button>
+    <a asp-page="/Index" class="btn btn-secondary">Отмена</a>
+</form>
