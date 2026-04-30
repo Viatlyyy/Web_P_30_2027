@@ -26,6 +26,12 @@ namespace WebApplication1.Pages.Account
 
         public class InputModel
         {
+            public string Email { get; set; } = string.Empty;
+
+            public string? FirstName { get; set; }
+            public string? LastName { get; set; }
+
+            [Display(Name = "Аватар")]
             public IFormFile? AvatarImage { get; set; }
         }
 
@@ -34,18 +40,29 @@ namespace WebApplication1.Pages.Account
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
 
+            Input.Email = user.Email ?? string.Empty;
+            Input.FirstName = user.FirstName;
+            Input.LastName = user.LastName;
             CurrentAvatarPath = user.AvatarPath;
+
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            if (!ModelState.IsValid) return Page();
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
 
+       
+            user.FirstName = Input.FirstName;
+            user.LastName = Input.LastName;
+
+   
             if (Input.AvatarImage != null && Input.AvatarImage.Length > 0)
             {
-                
+              
                 if (!string.IsNullOrEmpty(user.AvatarPath))
                 {
                     var oldPath = Path.Combine(_environment.WebRootPath, user.AvatarPath.TrimStart('/'));
@@ -56,17 +73,26 @@ namespace WebApplication1.Pages.Account
                 
                 string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "avatars");
                 Directory.CreateDirectory(uploadsFolder);
-                string uniqueFileName = $"{user.Id}_{System.DateTime.Now.Ticks}_{Input.AvatarImage.FileName}";
+                string uniqueFileName = $"{user.Id}_{System.DateTime.Now.Ticks}_{Path.GetFileName(Input.AvatarImage.FileName)}";
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await Input.AvatarImage.CopyToAsync(stream);
                 }
                 user.AvatarPath = $"/uploads/avatars/{uniqueFileName}";
-                await _userManager.UpdateAsync(user);
-                CurrentAvatarPath = user.AvatarPath;
             }
 
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+                return Page();
+            }
+
+          
+            CurrentAvatarPath = user.AvatarPath;
+            
             return RedirectToPage();
         }
     }
