@@ -1,28 +1,21 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using WebApplication1.Models;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace WebApplication1.Pages.Account
 {
-    [Authorize(Roles = "Administrator")]
     public class RegisterModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager)
+
+        public RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -41,17 +34,6 @@ namespace WebApplication1.Pages.Account
             [DataType(DataType.Password)]
             [Compare("Password", ErrorMessage = "Пароли не совпадают")]
             public string ConfirmPassword { get; set; } = string.Empty;
-
-            public string? SelectedRole { get; set; }
-        }
-
-        public SelectList RoleSelectList { get; set; } = new SelectList(Enumerable.Empty<IdentityRole>(), "Name", "Name");
-
-        public async Task<IActionResult> OnGetAsync()
-        {
-            var roles = await _roleManager.Roles.ToListAsync();
-            RoleSelectList = new SelectList(roles, "Name", "Name");
-            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
@@ -63,18 +45,14 @@ namespace WebApplication1.Pages.Account
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    if (!string.IsNullOrEmpty(Input.SelectedRole))
-                        await _userManager.AddToRoleAsync(user, Input.SelectedRole);
-
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }
                 foreach (var error in result.Errors)
-                    ModelState.AddModelError(string.Empty, error.Description);
+                {
+                    ModelState.AddModelError(string.Empty, error.Description ?? "Ошибка");
+                }
             }
-            
-            var roles = await _roleManager.Roles.ToListAsync();
-            RoleSelectList = new SelectList(roles, "Name", "Name");
             return Page();
         }
     }
