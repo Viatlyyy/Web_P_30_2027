@@ -11,20 +11,18 @@ namespace WebApplication1.Data
         {
         }
 
-        public DbSet<Student> Students { get; set; }
-        public DbSet<Course> Courses { get; set; }
-        public DbSet<Instructor> Instructors { get; set; }
-        public DbSet<Enrollment> Enrollments { get; set; }
+        public virtual DbSet<Student> Students { get; set; }
+        public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<Instructor> Instructors { get; set; }
+        public virtual DbSet<Enrollment> Enrollments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            
             builder.Entity<Enrollment>()
                 .HasKey(e => new { e.StudentId, e.CourseId });
 
-            
             builder.Entity<Enrollment>()
                 .HasOne(e => e.Student)
                 .WithMany(s => s.Enrollments)

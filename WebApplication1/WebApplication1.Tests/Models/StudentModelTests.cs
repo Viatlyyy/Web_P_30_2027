@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WebApplication1.Models;
 using Xunit;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace WebApplication1.Tests.Models
 {
@@ -9,7 +11,6 @@ namespace WebApplication1.Tests.Models
         [Fact]
         public void Student_ValidData_PassesValidation()
         {
-          
             var student = new Student
             {
                 FirstName = "Иван",
@@ -23,7 +24,6 @@ namespace WebApplication1.Tests.Models
 
             var isValid = Validator.TryValidateObject(student, context, results, true);
 
-         
             Assert.True(isValid);
             Assert.Empty(results);
         }
@@ -31,25 +31,22 @@ namespace WebApplication1.Tests.Models
         [Fact]
         public void Student_MissingFirstName_FailsValidation()
         {
-          
+            
             var student = new Student
             {
-                
+                FirstName = string.Empty, 
                 LastName = "Петров",
                 Age = 20,
                 DateOfBirth = new DateTime(2000, 1, 1),
                 Email = "ivan@example.com"
             };
-            
-            student.FirstName = string.Empty;
-
             var context = new ValidationContext(student);
             var results = new List<ValidationResult>();
 
-           
+         
             var isValid = Validator.TryValidateObject(student, context, results, true);
 
-           
+          
             Assert.False(isValid);
             Assert.Contains(results, r => r.ErrorMessage != null && r.ErrorMessage.Contains("Имя"));
         }
@@ -64,17 +61,15 @@ namespace WebApplication1.Tests.Models
                 LastName = "Петров",
                 Age = 20,
                 DateOfBirth = new DateTime(2000, 1, 1),
-                Email = "invalid-email" 
+                Email = "invalid-email"
             };
             var context = new ValidationContext(student);
             var results = new List<ValidationResult>();
 
-          
             var isValid = Validator.TryValidateObject(student, context, results, true);
 
-            
             Assert.False(isValid);
-            Assert.Contains(results, r => r.ErrorMessage != null && r.ErrorMessage.Contains("Email"));
+            Assert.Contains(results, r => r.ErrorMessage == "Введите корректный email адрес");
         }
     }
 }

@@ -11,26 +11,23 @@ namespace WebApplication1.Pages.Account
     public class ProfileModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IWebHostEnvironment _environment;
 
-        public ProfileModel(UserManager<ApplicationUser> userManager, IWebHostEnvironment environment)
+        public ProfileModel(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
-            _environment = environment;
         }
 
         [BindProperty]
         public InputModel Input { get; set; } = new InputModel();
 
-        public string? CurrentAvatarPath { get; set; }
+        public string? AvatarBase64 { get; set; }
+        public string? AvatarContentType { get; set; }
 
         public class InputModel
         {
-            public string Email { get; set; } = string.Empty;
-
+            public string? Email { get; set; }
             public string? FirstName { get; set; }
             public string? LastName { get; set; }
-
             [Display(Name = "Аватар")]
             public IFormFile? AvatarImage { get; set; }
         }
@@ -40,10 +37,15 @@ namespace WebApplication1.Pages.Account
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
 
-            Input.Email = user.Email ?? string.Empty;
+            Input.Email = user.Email;
             Input.FirstName = user.FirstName;
             Input.LastName = user.LastName;
-            CurrentAvatarPath = user.AvatarPath;
+
+            if (user.AvatarBytes != null && user.AvatarBytes.Length > 0)
+            {
+                AvatarBase64 = Convert.ToBase64String(user.AvatarBytes);
+                AvatarContentType = user.AvatarContentType;
+            }
 
             return Page();
         }
@@ -55,31 +57,15 @@ namespace WebApplication1.Pages.Account
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
 
-       
             user.FirstName = Input.FirstName;
             user.LastName = Input.LastName;
 
-   
             if (Input.AvatarImage != null && Input.AvatarImage.Length > 0)
             {
-              
-                if (!string.IsNullOrEmpty(user.AvatarPath))
-                {
-                    var oldPath = Path.Combine(_environment.WebRootPath, user.AvatarPath.TrimStart('/'));
-                    if (System.IO.File.Exists(oldPath))
-                        System.IO.File.Delete(oldPath);
-                }
-
-                
-                string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "avatars");
-                Directory.CreateDirectory(uploadsFolder);
-                string uniqueFileName = $"{user.Id}_{System.DateTime.Now.Ticks}_{Path.GetFileName(Input.AvatarImage.FileName)}";
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await Input.AvatarImage.CopyToAsync(stream);
-                }
-                user.AvatarPath = $"/uploads/avatars/{uniqueFileName}";
+                using var memoryStream = new MemoryStream();
+                await Input.AvatarImage.CopyToAsync(memoryStream);
+                user.AvatarBytes = memoryStream.ToArray();
+                user.AvatarContentType = Input.AvatarImage.ContentType;
             }
 
             var result = await _userManager.UpdateAsync(user);
@@ -90,9 +76,6 @@ namespace WebApplication1.Pages.Account
                 return Page();
             }
 
-          
-            CurrentAvatarPath = user.AvatarPath;
-            
             return RedirectToPage();
         }
     }
