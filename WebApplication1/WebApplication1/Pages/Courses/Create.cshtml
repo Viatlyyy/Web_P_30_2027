@@ -1,41 +1,38 @@
 ﻿@page
 @model WebApplication1.Pages.Courses.CreateModel
-
 @{
-    ViewData["Title"] = "Create Course";
+    ViewData["Title"] = "Создание курса";
 }
-
-<h1>Create Course</h1>
-
+<h1>Создание курса</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="Course.Title" class="control-label"></label>
+            <div class="form-group mb-3">
+                <label asp-for="Course.Title" class="control-label">Название</label>
                 <input asp-for="Course.Title" class="form-control" />
                 <span asp-validation-for="Course.Title" class="text-danger"></span>
             </div>
-
-            <div class="form-group">
-                <label asp-for="Course.Name" class="control-label"></label>
+            <div class="form-group mb-3">
+                <label asp-for="Course.Name" class="control-label">Полное название</label>
                 <input asp-for="Course.Name" class="form-control" />
                 <span asp-validation-for="Course.Name" class="text-danger"></span>
             </div>
-
+            <div class="form-group mb-3">
+                <label asp-for="Course.InstructorId" class="control-label">Преподаватель</label>
+                <select asp-for="Course.InstructorId" class="form-control" asp-items="Model.InstructorsSelectList">
+                    <option value="">-- Выберите преподавателя --</option>
+                </select>
+                <span asp-validation-for="Course.InstructorId" class="text-danger"></span>
+            </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Создать" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-page="Index">Back to List</a>
-</div>
-
+<div><a asp-page="Index">Назад к списку</a></div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

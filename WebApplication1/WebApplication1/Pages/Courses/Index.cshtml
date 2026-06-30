@@ -1,35 +1,28 @@
 ﻿@page
 @model WebApplication1.Pages.Courses.IndexModel
-
 @{
-    ViewData["Title"] = "Courses";
+    ViewData["Title"] = "Курсы";
 }
+<h1>Курсы</h1>
+<p><a asp-page="Create" class="btn btn-primary">Создать новый</a></p>
 
-<h1>Courses</h1>
-
-<p>
-    <a asp-page="Create" class="btn btn-primary">Create New</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Name</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Courses)
-        {
-            <tr>
-                <td>@item.Title</td>
-                <td>@item.Name</td>
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var course in Model.Courses)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@course.Title</h5>
+                    <p class="card-text">
+                        <strong>Полное название:</strong> @course.Name<br />
+                        <strong>Преподаватель:</strong> @(course.Instructor != null ? $"{course.Instructor.FirstName} {course.Instructor.LastName}" : "Не назначен")
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a asp-page="./Edit" asp-route-id="@course.Id" class="btn btn-sm btn-outline-primary">Редактировать</a>
+                    <a asp-page="./Delete" asp-route-id="@course.Id" class=" btn-sm btn-outline-danger">Удалить</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

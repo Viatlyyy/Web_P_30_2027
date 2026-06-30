@@ -1,0 +1,41 @@
+﻿@page
+@model WebApplication1.Pages.Instructors.DetailsModel
+@{
+    ViewData["Title"] = "Детали преподавателя";
+}
+
+<h1>Детали преподавателя</h1>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Имя</dt>
+        <dd class="col-sm-10">@Model.Instructor.FirstName</dd>
+        <dt class="col-sm-2">Фамилия</dt>
+        <dd class="col-sm-10">@Model.Instructor.LastName</dd>
+        <dt class="col-sm-2">Отдел</dt>
+        <dd class="col-sm-10">@Model.Instructor.Department</dd>
+        <dt class="col-sm-2">Полное имя</dt>
+        <dd class="col-sm-10">@Model.Instructor.Name</dd>
+    </dl>
+    <h3>Ведёт курсы</h3>
+    @if (Model.Instructor.Courses.Any())
+    {
+        <table class="table">
+            <thead><tr><th>Название</th><th>Полное название</th></tr></thead>
+            <tbody>
+                @foreach (var course in Model.Instructor.Courses)
+                {
+                    <tr><td>@course.Title</td><td>@course.Name</td></tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Преподаватель пока не ведёт курсов.</p>
+    }
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Instructor.Id">Редактировать</a> |
+    <a asp-page="./Index">Назад к списку</a>
+</div>

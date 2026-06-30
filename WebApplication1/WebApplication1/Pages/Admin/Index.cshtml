@@ -1,0 +1,23 @@
+﻿@page
+@model WebApplication1.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Управление пользователями";
+}
+<h1>Пользователи</h1>
+<p><a asp-page="Create" class="btn btn-primary">Создать нового</a></p>
+<table class="table">
+    <thead>
+        <tr><th>Email</th><th>Роли</th><th>Аватар</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>(await Model.UserManager.GetRolesAsync(user)).Any() ? string.Join(", ", await Model.UserManager.GetRolesAsync(user)) : "Нет"</td>
+                <td>@(string.IsNullOrEmpty(user.AvatarPath) ? "Нет" : "Да")</td>
+                <td><a asp-page="Edit" asp-route-id="@user.Id">Редактировать</a> | <a asp-page="Delete" asp-route-id="@user.Id">Удалить</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

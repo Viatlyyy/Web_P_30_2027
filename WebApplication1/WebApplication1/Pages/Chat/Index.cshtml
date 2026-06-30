@@ -1,0 +1,51 @@
+﻿@page
+@model WebApplication1.Pages.Chat.IndexModel
+@{
+    ViewData["Title"] = "Чат";
+}
+<h1>Общий чат</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div id="chatMessages" style="height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+            @foreach (var msg in Model.PreviousMessages)
+            {
+                <div><strong>@msg.UserName:</strong> @msg.Message <small>(@msg.Timestamp.ToString("HH:mm:ss"))</small></div>
+            }
+        </div>
+        <div class="input-group">
+            <input type="text" id="messageInput" class="form-control" placeholder="Введите сообщение...">
+            <button class="btn btn-primary" id="sendButton">Отправить</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("sendButton").addEventListener("click", function(event) {
+            var message = document.getElementById("messageInput").value;
+            if (message) {
+                connection.invoke("SendMessage", message).catch(function(err) {
+                    console.error(err.toString());
+                });
+                document.getElementById("messageInput").value = "";
+            }
+            event.preventDefault();
+        });
+
+        window.appendChatMessage = function(userName, message, timestamp) {
+            var chatDiv = document.getElementById("chatMessages");
+            var msgDiv = document.createElement("div");
+            var time = new Date(timestamp).toLocaleTimeString();
+            msgDiv.innerHTML = `<strong>${escapeHtml(userName)}:</strong> ${escapeHtml(message)} <small>(${time})</small>`;
+            chatDiv.appendChild(msgDiv);
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        };
+
+        function escapeHtml(html) {
+            var text = document.createTextNode(html);
+            var p = document.createElement('div');
+            p.appendChild(text);
+            return p.innerHTML;
+        }
+    </script>
+}

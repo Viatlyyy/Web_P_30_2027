@@ -1,0 +1,52 @@
+﻿@page
+@model WebApplication1.Pages.Account.ProfileModel
+@{
+    ViewData["Title"] = "Мой профиль";
+}
+
+<h1>Мой профиль</h1>
+
+<form method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Input.Email" class="form-label">Email</label>
+        <input asp-for="Input.Email" class="form-control" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.FirstName" class="form-label">Имя</label>
+        <input asp-for="Input.FirstName" class="form-control" />
+        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.LastName" class="form-label">Фамилия</label>
+        <input asp-for="Input.LastName" class="form-control" />
+        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Аватар</label>
+        @if (!string.IsNullOrEmpty(Model.AvatarBase64))
+        {
+            <div class="mb-2">
+                <img src="data:@Model.AvatarContentType;base64,@Model.AvatarBase64" alt="Avatar" style="width: 150px; height: 150px; object-fit: cover; border: 1px solid #ccc;" />
+            </div>
+        }
+        else
+        {
+            <div class="mb-2">
+                <img src="/images/default-avatar.png" alt="Default avatar" style="width: 150px; height: 150px; object-fit: cover; border: 1px solid #ccc;" />
+            </div>
+        }
+        <input asp-for="Input.AvatarImage" type="file" class="form-control" accept="image/*" />
+        <span asp-validation-for="Input.AvatarImage" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

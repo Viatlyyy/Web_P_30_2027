@@ -1,39 +1,31 @@
 ﻿@page
 @model WebApplication1.Pages.Instructors.IndexModel
-
 @{
-    ViewData["Title"] = "Instructors";
+    ViewData["Title"] = "Преподаватели";
 }
 
-<h1>Instructors</h1>
+<h1>Преподаватели</h1>
+<p><a asp-page="Create" class="btn btn-primary">Создать нового</a></p>
 
-<p>
-    <a asp-page="Create" class="btn btn-primary">Create New</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Department</th>
-            <th>Name</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Instructors)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
-                <td>@Html.DisplayFor(modelItem => item.LastName)</td>
-                <td>@Html.DisplayFor(modelItem => item.Department)</td>
-                <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var instructor in Model.Instructors)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@instructor.FirstName @instructor.LastName</h5>
+                    <p class="card-text">
+                        <strong>Отдел:</strong> @instructor.Department<br />
+                        <strong>Курсов ведёт:</strong> @instructor.Courses.Count<br />
+                        <strong>Полное имя:</strong> @instructor.Name
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a asp-page="./Edit" asp-route-id="@instructor.Id" class="btn btn-sm btn-outline-primary">Редактировать</a>
+                    <a asp-page="./Details" asp-route-id="@instructor.Id" class="btn btn-sm btn-outline-info">Подробнее</a>
+                    <a asp-page="./Delete" asp-route-id="@instructor.Id" class="btn btn-sm btn-outline-danger">Удалить</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
