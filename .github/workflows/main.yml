@@ -1,0 +1,35 @@
+name: .NET Core CI
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore WebApplication1/WebApplication1.csproj
+
+    - name: Build
+      run: dotnet build WebApplication1/WebApplication1.csproj --no-restore
+
+    - name: Restore test dependencies
+      run: dotnet restore WebApplication1.Tests/WebApplication1.Tests.csproj
+
+    - name: Build tests
+      run: dotnet build WebApplication1.Tests/WebApplication1.Tests.csproj --no-restore
+
+    - name: Test
+      run: dotnet test WebApplication1.Tests/WebApplication1.Tests.csproj --no-build --verbosity normal
